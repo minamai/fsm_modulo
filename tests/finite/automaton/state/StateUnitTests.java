@@ -3,53 +3,13 @@ package finite.automaton.state;
 import junit.framework.TestCase;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static finite.automaton.state.StateValueChecker.*;
 
 public class StateUnitTests extends TestCase {
 
     private final String NAME = "start";
     private final int VALUE = 404;
     private final int VALUE2 = 200;
-
-
-    ////////////////////////
-    // private helpers
-
-    private void assertIntegerValueEquals(int expected, Integer value){
-        if(value == null){
-            fail("failed to initialize state value");
-        }
-        assertEquals(expected, value.intValue());
-    }
-
-    private void checkWholeStateFinal(State<Integer> state, String name, int value){
-        assertEquals(name, state.getName());
-        assertTrue(state.isFinal());
-        assertIntegerValueEquals(value, state.getValue());
-        assertIntegerValueEquals(value, state.getStateResult());
-        assertSame(state.getValue(), state.getStateResult());
-    }
-
-    private void checkWholeStateNotFinal(State<Integer> state, String name, int value){
-        assertEquals(name, state.getName());
-        assertFalse(state.isFinal());
-        assertIntegerValueEquals(value, state.getValue());
-        assertNull(state.getStateResult());
-    }
-
-    private void checkValuelessStateFinal(State<Integer> state, String name){
-        assertEquals(name, state.getName());
-        assertTrue(state.isFinal());
-        assertNull(state.getValue());
-        assertNull(state.getStateResult());
-    }
-
-    private void checkValuelessStateNotFinal(State<Integer> state, String name){
-        assertEquals(name, state.getName());
-        assertFalse(state.isFinal());
-        assertNull(state.getValue());
-        assertNull(state.getStateResult());
-    }
 
 
     ////////////////////////
