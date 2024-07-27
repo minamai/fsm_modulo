@@ -1,0 +1,10 @@
+#ignorable compilation results
+/out
+
+#ignore this for now, I guess
+#thanks, intellij
+/.idea
+fsm_modulo.iml
+#this one was pre-ignored by intellij autogen
+/shelf
+
