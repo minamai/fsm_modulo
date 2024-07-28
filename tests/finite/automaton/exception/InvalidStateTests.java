@@ -17,6 +17,7 @@ public class InvalidStateTests extends TestCase {
 
     //////////////
     // per-test params and setup
+
     private static FSM<Integer> machine;
     private static State<Integer> nullState;
     private static State<Integer> inState;
@@ -31,42 +32,37 @@ public class InvalidStateTests extends TestCase {
         outState = new State<>(NAMES[1]);
     }
 
-    @Test
-    public void testSetInvalidStateAsInitial(){
-        setupDummyFSM();
-        assertThrows("Attempting to set state not in FSM to initial state.",
-                InvalidStateException.class, () -> machine.setInitState(outState));
-    }
 
-    @Test
-    public void testInvalidStateStartingTransition(){
+    //////////////
+    // setters & field constructors
+
+    private void testInvalidStateStartingTransition(State<Integer> invalid){
         setupDummyFSM();
 
         // failure to get before setting:
         assertThrows("Attempting to transition from state not in FSM.",
                 InvalidStateException.class,
-                () -> machine.getTransition(outState, ALPHABET[0]));
+                () -> machine.getTransition(invalid, ALPHABET[0]));
 
         // failure to set:
         assertThrows("Attempting to set transition from state not in FSM.",
                 InvalidStateException.class,
-                () -> machine.setTransition(outState, ALPHABET[0], inState));
+                () -> machine.setTransition(invalid, ALPHABET[0], inState));
 
         // failure to get after setting:
         // can happen if user catches and insists on continuing
         assertThrows("Attempting to transition from state not in FSM.",
                 InvalidStateException.class,
-                () -> machine.getTransition(outState, ALPHABET[0]));
+                () -> machine.getTransition(invalid, ALPHABET[0]));
     }
 
-    @Test
-    public void testInvalidStateEndingTransition(){
+    private void testInvalidStateEndingTransition(State<Integer> invalid){
         setupDummyFSM();
 
         // failure to set:
         assertThrows("Attempting to set transition to state not in FSM.",
                 InvalidStateException.class,
-                () -> machine.setTransition(inState, ALPHABET[0], outState));
+                () -> machine.setTransition(inState, ALPHABET[0], invalid));
 
         // failure to get after setting:
         // can happen if user catches and insists on continuing
@@ -76,5 +72,36 @@ public class InvalidStateTests extends TestCase {
         catch(Exception e){
             fail("Failed to get null transitions from state: " + e.getMessage());
         }
+    }
+
+
+    //////////////
+    // test cases
+
+    @Test
+    public void testSetInvalidStateAsInitial(){
+        setupDummyFSM();
+        assertThrows("Attempting to set state not in FSM to initial state.",
+                InvalidStateException.class, () -> machine.setInitState(outState));
+    }
+
+    @Test
+    public void testExternalStateStartingTransition(){
+        testInvalidStateStartingTransition(outState);
+    }
+
+    @Test
+    public void testExternalStateEndingTransition(){
+        testInvalidStateEndingTransition(outState);
+    }
+
+    @Test
+    public void testNullPointerStartingTransition(){
+        testInvalidStateStartingTransition(null);
+    }
+
+    @Test
+    public void testNullPointerEndingTransition(){
+        testInvalidStateEndingTransition(null);
     }
 }
