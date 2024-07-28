@@ -19,26 +19,11 @@ public class FSM<E> {
 
     private State<E> initState;
 
+    private final State<E> nullState;
+
     // for now a 2-tier map
     // decisions decisions (how to handle unset values: null state or null value?)
     private final Map<State<E>, Map<Character, State<E>>> transitionTable;
-
-
-    //////////////
-    // semi-static
-    // true static variables aren't possible due to the nature of generics
-
-    // the state that will be used with null-transitions
-    // will not be added to transition table for size reasons
-    // just shortcut to a null result
-    // TODO: decide between the following options:
-    /*   * NullState class that prevents re-setting nullState components
-             ^ allow nullState to be publicly accessible then?
-         * make sure user only sees null
-         * allow user to change null state + document how to do that
-             ^ advanced feature
-     */
-    private final State<E> nullState = new State<>(null);
 
 
     ////////////////////////
@@ -48,9 +33,9 @@ public class FSM<E> {
     // changes are not a good idea
     private char[] setAlphabet(char[] alphabet){
         this.alphaLength = alphabet.length;
+        Arrays.sort(alphabet);
         //// alt version for non-final alphabet:
         // this.alphabet = alphabet;
-        Arrays.sort(alphabet);
         return alphabet;
     }
 
@@ -60,11 +45,7 @@ public class FSM<E> {
         states.put(state.getName(), state);
 
         // add to transition table
-        Map<Character, State<E>> stateTransitions= new HashMap<>();
-        for(int i = 0; i < alphaLength; i++){
-            stateTransitions.put(alphabet[i], null);
-        }
-        transitionTable.put(state, stateTransitions);
+        transitionTable.put(state, new HashMap<>());
     }
 
 
@@ -76,6 +57,7 @@ public class FSM<E> {
         // final values cannot be set outside a
         // credit: https://stackoverflow.com/questions/11758440/initialize-final-variable-within-constructor-in-another-method
         this.alphabet = setAlphabet(alphabet);
+        nullState = new State<>(null);
 
         states = new HashMap<>();
         states.put(null, nullState);
@@ -119,7 +101,9 @@ public class FSM<E> {
         if(state.equals(nullState)){
             return nullState;
         }
-        return transitionTable.get(state).get(c);
+        State<E> output = transitionTable.get(state).get(c);
+        // if no explicit mapping, output nullState
+        return output != null ? output : nullState;
     }
 
 
@@ -140,7 +124,7 @@ public class FSM<E> {
     }
 
     public State<E> addNewState(String name, E value){
-        State<E> state = new State<>(name);
+        State<E> state = new State<>(name, false, value);
         incorporateNewState(state);
         return state;
     }
@@ -158,8 +142,8 @@ public class FSM<E> {
             // TODO: determine if exception is good here.
             return;
         }
-        // if null state, return null state
-        if(current.equals(nullState) || next.equals(nullState)){
+        // if from null state, do not change
+        if(current.equals(nullState)){
             return; // TODO: throw exception
         }
         transitionTable.get(current).put(c, next);
