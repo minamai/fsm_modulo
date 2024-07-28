@@ -18,7 +18,10 @@ public class InvalidCharacterTests extends TestCase {
         FSM<Integer> machine = new FSM<>(ALPHABET);
         State<Integer> state1 = machine.setNewState(NAMES[0]);
         State<Integer> state2 = machine.setNewState(NAMES[1]);
-        char out = '0'; // character not in alphabet
+        char out = '0';
+
+        // character out not in alphabet
+        assertFalse(machine.isInAlphabet(out));
 
         // failure to get before setting:
         assertThrows("Attempting to transition using character not in alphabet.",

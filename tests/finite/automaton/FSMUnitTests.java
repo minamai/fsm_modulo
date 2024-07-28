@@ -62,6 +62,24 @@ public class FSMUnitTests extends TestCase {
 
 
     //////////////
+    // alphabet tests
+
+    public void testCharacterInAlphabet(){
+        char[] alphabet1 = {'0', '1', '2', '3'};
+        char[] alphabet2 = {'a', 'b', 'c', 'd'};
+        FSM<Integer> machine = new FSM<>(alphabet1);
+
+        // assert alphabets are fine
+        for(char c : alphabet1){
+            assertTrue(machine.isInAlphabet(c));
+        }
+        for(char c : alphabet2){
+            assertFalse(machine.isInAlphabet(c));
+        }
+    }
+
+
+    //////////////
     // state creation tests
 
     @Test
@@ -125,6 +143,27 @@ public class FSMUnitTests extends TestCase {
 
     //////////////
     // other state tests
+
+    @Test
+    public void testStateContainmentCheck() {
+        FSM<Integer> machine = new FSM<>(ALPHABET);
+
+        // null state should always be contained
+        State<Integer> nullState = machine.getNullState();
+        assertTrue(machine.containsState(nullState));
+
+        // new contained state
+        State<Integer> inState = machine.setNewState(NAMES[0]);
+        assertTrue(machine.containsState(inState));
+
+        // new external state
+        State<Integer> outState1 = new State<>(NAMES[1]);
+        assertFalse(machine.containsState(outState1));
+
+        // new external state, same name as internal state
+        State<Integer> outState2 = new State<>(NAMES[0]);
+        assertFalse(machine.containsState(outState2));
+    }
 
     @Test
     public void testSetInitialState(){
@@ -268,6 +307,4 @@ public class FSMUnitTests extends TestCase {
             fail("Final transition failed: " + e.getMessage());
         }
     }
-
-
 }

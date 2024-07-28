@@ -100,7 +100,7 @@ public class FSM<E> {
     public State<E> getTransition(State<E> state, char c)
     throws InvalidStateException, InvalidCharacterException{
         // check that both state and character are in FSM
-        if(!states.containsValue(state)) {
+        if(!containsState(state)) {
             throw new InvalidStateException("Attempting to transition from state not in FSM.");
         }
         if(Arrays.binarySearch(alphabet, c) < 0){
@@ -117,10 +117,23 @@ public class FSM<E> {
 
 
     //////////////
+    // boolean state checkers
+
+    public boolean isInAlphabet(char c){
+        // iff search returns valid (non-negative) index, char is in alphabet
+        return Arrays.binarySearch(alphabet, c) >= 0;
+    }
+
+    public boolean containsState(State<E> state){
+        return states.containsValue(state);
+    }
+
+
+    //////////////
     // setters & field constructors
 
     public void setInitState(State<E> state) throws InvalidStateException{
-        if(!states.containsValue(state)) {
+        if(!containsState(state)) {
             throw new InvalidStateException("Attempting to set state not in FSM to initial state.");
         }
         initState = state;
@@ -147,10 +160,10 @@ public class FSM<E> {
     public void setTransition(State<E> current, char c, State<E> next)
             throws InvalidStateException, InvalidCharacterException, NullStateMutationException{
         // check that both states and character are in FSM
-        if(!states.containsValue(current)) {
+        if(!containsState(current)) {
             throw new InvalidStateException("Attempting to set transition from state not in FSM.");
         }
-        if(!states.containsValue(next)) {
+        if(!containsState(next)) {
             throw new InvalidStateException("Attempting to set transition to state not in FSM.");
         }
         if(Arrays.binarySearch(alphabet, c) < 0){
