@@ -1,5 +1,6 @@
 package finite.automaton;
 
+import finite.automaton.exceptions.InvalidStateException;
 import finite.automaton.state.State;
 import junit.framework.TestCase;
 import org.junit.Test;
@@ -9,6 +10,7 @@ import java.util.Collection;
 
 import static finite.automaton.state.StateValueChecker.*;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertThrows;
 
 public class FSMUnitTests extends TestCase {
 
@@ -49,7 +51,12 @@ public class FSMUnitTests extends TestCase {
         checkValuelessStateNotFinal(nullState, null);
 
         for (char c : ALPHABET) {
-            assertSame(nullState, machine.getTransition(nullState, c));
+            try {
+                assertSame(nullState, machine.getTransition(nullState, c));
+            }
+            catch(Exception e){
+                fail("Could not get transition from null state: " + e.getMessage());
+            }
         }
     }
 
@@ -125,15 +132,20 @@ public class FSMUnitTests extends TestCase {
         assertNull(machine.getInitState());
 
         // make null state init
-        machine.setInitState(machine.getNullState());
-        assertNotNull(machine.getInitState());
-        assertSame(machine.getNullState(), machine.getInitState());
+        try {
+            machine.setInitState(machine.getNullState());
+            assertNotNull(machine.getInitState());
+            assertSame(machine.getNullState(), machine.getInitState());
 
-        // make new state init
-        State<Integer> state = machine.addNewFinalState(NAMES[0], VALUES[0]);
-        machine.setInitState(state);
-        assertNotSame(machine.getInitState(), machine.getNullState());
-        assertSame(state, machine.getInitState());
+            // make new state init
+            State<Integer> state = machine.addNewFinalState(NAMES[0], VALUES[0]);
+            machine.setInitState(state);
+            assertNotSame(machine.getInitState(), machine.getNullState());
+            assertSame(state, machine.getInitState());
+        }
+        catch(Exception e){
+            fail("Could not test init state: " + e.getMessage());
+        }
     }
 
 
@@ -146,25 +158,40 @@ public class FSMUnitTests extends TestCase {
         State<Integer> nullState = machine.getNullState();
 
         State<Integer> first = machine.addNewFinalState(NAMES[0], VALUES[0]);
-        // test that all transitions begin as to null state
-        for(char c : ALPHABET){
-            assertSame(nullState, machine.getTransition(first, c));
+        try {
+            // test that all transitions begin as to null state
+            for (char c : ALPHABET) {
+                assertSame(nullState, machine.getTransition(first, c));
+            }
+        }
+        catch(Exception e){
+            fail("Failed to get null transitions from state: " + e.getMessage());
         }
 
-        // add recursive mapping, check again
-        machine.setTransition(first, ALPHABET[0], first);
-        assertSame(first, machine.getTransition(first, ALPHABET[0]));
-        for(int i = 1; i < ALPHABET.length; i++){
-            assertSame(nullState, machine.getTransition(first, ALPHABET[i]));
+        try {
+            // add recursive mapping, check again
+            machine.setTransition(first, ALPHABET[0], first);
+            assertSame(first, machine.getTransition(first, ALPHABET[0]));
+            for (int i = 1; i < ALPHABET.length; i++) {
+                assertSame(nullState, machine.getTransition(first, ALPHABET[i]));
+            }
+        }
+        catch(Exception e){
+            fail("Could not get recursive transition: " + e.getMessage());
         }
 
-        // add state and transition to it
-        State<Integer> second = machine.addNewFinalState(NAMES[1], VALUES[1]);
-        machine.setTransition(first, ALPHABET[1], second);
+        try {
+            // add state and transition to it
+            State<Integer> second = machine.addNewFinalState(NAMES[1], VALUES[1]);
+            machine.setTransition(first, ALPHABET[1], second);
 
-        assertSame(first, machine.getTransition(first, ALPHABET[0]));
-        assertSame(second, machine.getTransition(first, ALPHABET[1]));
-        assertSame(nullState, machine.getTransition(first, ALPHABET[2]));
+            assertSame(first, machine.getTransition(first, ALPHABET[0]));
+            assertSame(second, machine.getTransition(first, ALPHABET[1]));
+            assertSame(nullState, machine.getTransition(first, ALPHABET[2]));
+        }
+        catch(Exception e){
+            fail("Could not get transition to new state: " + e.getMessage());
+        }
     }
 
     @Test
@@ -177,19 +204,34 @@ public class FSMUnitTests extends TestCase {
         State<Integer> third = machine.addNewFinalState(NAMES[2], VALUES[2]);
         char c = ALPHABET[0];
 
-        // part 1: set first + c = second
-        machine.setTransition(first, c, second);
-        assertSame(second, machine.getTransition(first, c));
+        try {
+            // part 1: set first + c = second
+            machine.setTransition(first, c, second);
+            assertSame(second, machine.getTransition(first, c));
+        }
+        catch(Exception e){
+            fail("First transition failed: " + e.getMessage());
+        }
 
-        // part 2: set first + c = third
-        machine.setTransition(first, c, third);
-        assertSame(third, machine.getTransition(first, c));
+        try{
+            // part 2: set first + c = third
+            machine.setTransition(first, c, third);
+            assertSame(third, machine.getTransition(first, c));
+        }
+        catch(Exception e){
+            fail("Second transition failed: " + e.getMessage());
+        }
 
-        // part 2: set first + c = null
-        // here, check all transitions from first go to null state
-        machine.setTransition(first, c, nullState);
-        for(char ch : ALPHABET) {
-            assertSame(nullState, machine.getTransition(first, ch));
+        try {
+            // part 3: set first + c = null
+            // here, check all transitions from first go to null state
+            machine.setTransition(first, c, nullState);
+            for (char ch : ALPHABET) {
+                assertSame(nullState, machine.getTransition(first, ch));
+            }
+        }
+        catch(Exception e){
+            fail("Final transition failed: " + e.getMessage());
         }
     }
 

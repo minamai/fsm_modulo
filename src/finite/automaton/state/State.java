@@ -66,6 +66,7 @@ public class State<E> {
     }
 
     // sets value to true
+    // TODO: if result is null, should this still be final?
     public void setResult(E result){
         finality = true;
         value = result;

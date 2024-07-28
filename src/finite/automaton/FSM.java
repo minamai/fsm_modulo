@@ -1,9 +1,10 @@
 package finite.automaton;
 
 import finite.automaton.state.State;
+import finite.automaton.exceptions.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 // E is the output type
 public class FSM<E> {
@@ -41,7 +42,7 @@ public class FSM<E> {
 
     private void incorporateNewState(State<E> state){
         // add to states list
-        // TODO: handle if names are not unique
+        // TODO: where to handle overwriting of states
         states.put(state.getName(), state);
 
         // add to transition table
@@ -69,7 +70,6 @@ public class FSM<E> {
     //////////////
     // getters
 
-    // for now we'll be lazy with the type
     public List<State<E>> getStates() {
         return new ArrayList<>(states.values());
     }
@@ -91,11 +91,14 @@ public class FSM<E> {
         return states.get(name);
     }
 
-    public State<E> getTransition(State<E> state, char c){
+    public State<E> getTransition(State<E> state, char c)
+    throws InvalidStateException, InvalidCharacterException{
         // check that both state and character are in FSM
-        if(! (states.containsValue(state) || Arrays.binarySearch(alphabet, c) < 0)){
-            // TODO: determine if exception is good here.
-            return null;
+        if(!states.containsValue(state)) {
+            throw new InvalidStateException("Attempting to transition from state not in FSM.");
+        }
+        if(Arrays.binarySearch(alphabet, c) < 0){
+            throw new InvalidCharacterException("Attempting to transition using character not in alphabet.");
         }
         // if null state, return null state
         if(state.equals(nullState)){
@@ -110,11 +113,11 @@ public class FSM<E> {
     //////////////
     // setters & field constructors
 
-    public void setInitState(State<E> state){
-        if(states.containsValue(state)) {
-            initState = state;
+    public void setInitState(State<E> state) throws InvalidStateException{
+        if(!states.containsValue(state)) {
+            throw new InvalidStateException("Attempting to set state not in FSM to initial state.");
         }
-        // TODO: throw exception
+        initState = state;
     }
 
     public State<E> addNewState(String name){
@@ -135,16 +138,21 @@ public class FSM<E> {
         return state;
     }
 
-    public void setTransition(State<E> current, char c, State<E> next){
+    public void setTransition(State<E> current, char c, State<E> next)
+            throws InvalidStateException, InvalidCharacterException, NullStateMutationException{
         // check that both states and character are in FSM
-        if(! (states.containsValue(current) || states.containsValue(next)
-            || Arrays.binarySearch(alphabet, c) < 0)){
-            // TODO: determine if exception is good here.
-            return;
+        if(!states.containsValue(current)) {
+            throw new InvalidStateException("Attempting to set transition from state not in FSM.");
+        }
+        if(!states.containsValue(next)) {
+            throw new InvalidStateException("Attempting to set transition to state not in FSM.");
+        }
+        if(Arrays.binarySearch(alphabet, c) < 0){
+            throw new InvalidCharacterException("Attempting to transition using character not in alphabet.");
         }
         // if from null state, do not change
         if(current.equals(nullState)){
-            return; // TODO: throw exception
+            throw new NullStateMutationException("Attempting to set transition from null state");
         }
         transitionTable.get(current).put(c, next);
     }
