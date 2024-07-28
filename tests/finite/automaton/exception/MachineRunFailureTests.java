@@ -94,7 +94,55 @@ public class MachineRunFailureTests extends TestCase {
     // strings tests
 
     @Test
-    public void testMachineFailsWithInvalidStrings(){
+    public void testBlankMachineFailsWithInvalidStrings(){
+        FSM<Integer> machine = new FSM<>(ALPHABET);
+        try {
+            machine.setInitState(machine.getNullState());
+        }
+        catch(Exception e){
+            fail("Could not ready blank machine");
+        }
+
+        assertTrue(machine.isReady()); // repeat for good luck
+
+        // should always check if machine is ready first
+        for(String s : INVALID_STRINGS){
+            assertFalse(machine.isStringOfAlphabet(s));
+            assertThrows("Character in data is not in alphabet.",
+                    InvalidCharacterException.class,
+                    () -> machine.runMachine(s));
+        }
+    }
+
+    @Test
+    public void testBlankMachinePassesWithValidStrings(){
+        FSM<Integer> machine = new FSM<>(ALPHABET);
+        try {
+            machine.setInitState(machine.getNullState());
+        }
+        catch(Exception e){
+            fail("Could not ready blank machine");
+        }
+
+        assertTrue(machine.isReady()); // repeat for good luck
+
+        // should always check if machine is ready first
+        for(String s : VALID_STRINGS){
+            assertTrue(machine.isStringOfAlphabet(s));
+            try{
+                State<Integer> endState = machine.runMachine(s);
+                // blank machine: always outputs null state
+                assertSame(machine.getNullState(), endState);
+                assertTrue(machine.containsState(endState));
+            }
+            catch(Exception e){
+                fail("Could not run machine on valid text \"" + s + "\": " + e.getMessage());
+            }
+        }
+    }
+
+    @Test
+    public void testFullMachineFailsWithInvalidStrings(){
         FSM<Integer> machine = new FSM<>(ALPHABET);
         fillInMachine(machine, true);
 
@@ -110,7 +158,7 @@ public class MachineRunFailureTests extends TestCase {
     }
 
     @Test
-    public void testMachinePassesWithValidStrings(){
+    public void testFullMachinePassesWithValidStrings(){
         FSM<Integer> machine = new FSM<>(ALPHABET);
         fillInMachine(machine, true);
 
