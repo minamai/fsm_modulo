@@ -48,7 +48,7 @@ public class StateUnitTests extends TestCase {
 
 
     //////////////
-    // setter tests
+    // finality setter tests
 
     @Test
     public void testMakeWholeStateFinal(){
@@ -122,6 +122,10 @@ public class StateUnitTests extends TestCase {
         assertSame(oldResult, newResult); // both should be null
     }
 
+
+    //////////////
+    // value setter tests
+
     @Test
     public void testSetValueAfterInitFinal(){
         State<Integer> state = new State<>(NAME, true);
@@ -143,13 +147,58 @@ public class StateUnitTests extends TestCase {
     @Test
     public void testResetValueAfterInit(){
         State<Integer> state = new State<>(NAME, true, VALUE);
+
         Integer oldValue = state.getValue();
         state.setValue(VALUE2);
 
         // check values outright
         checkWholeStateFinal(state, NAME, VALUE2);
-
         // compare to old value
         assertNotSame(oldValue, state.getValue());
+    }
+
+
+    //////////////
+    // result setter tests
+    // result = final + value
+
+    @Test
+    public void testSetResultOnWholeStateNotFinal(){
+        State<Integer> state = new State<>(NAME, false, VALUE);
+
+        Integer oldValue = state.getValue();
+        state.setResult(VALUE2);
+
+        // check values outright
+        checkWholeStateFinal(state, NAME, VALUE2);
+        // compare to old value
+        assertNotSame(oldValue, state.getValue());
+    }
+
+    @Test
+    public void testSetResultOnValuelessStateFinal(){
+        State<Integer> state = new State<>(NAME, true);
+        state.setResult(VALUE);
+
+        // check values outright
+        checkWholeStateFinal(state, NAME, VALUE);
+    }
+
+    @Test
+    public void testSetResultOnValuelessStateNotFinal(){
+        State<Integer> state = new State<>(NAME, false);
+        state.setResult(VALUE);
+
+        // check values outright
+        checkWholeStateFinal(state, NAME, VALUE);
+    }
+
+    @Test
+    public void testSetResultOnBlankState(){
+        State<Integer> state = new State<>(NAME);
+        state.setResult(VALUE);
+
+        // check values outright
+        checkWholeStateFinal(state, NAME, VALUE);
     }
 }
