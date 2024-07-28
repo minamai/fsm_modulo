@@ -12,6 +12,10 @@ public class NullStateMutationTests extends TestCase {
     char[] ALPHABET = {'0', '1', '2'};
     String NAME = "hello";
 
+
+    //////////////
+    // null state tests
+
     @Test
     public void testSetTransitionFromNull(){
         FSM<Integer> machine = new FSM<>(ALPHABET);
@@ -47,5 +51,23 @@ public class NullStateMutationTests extends TestCase {
             catch(Exception e){
             fail("Failed to get null transition: " + e.getMessage());
         }
+    }
+
+
+    //////////////
+    // null string tests
+
+    @Test
+    public void testNullStringNewState(){
+        FSM<Integer> machine = new FSM<>(ALPHABET);
+        assertThrows("Name of non-null state must not be null.",
+                NullPointerException.class,
+                () -> machine.setNewState(null));
+        assertThrows("Name of non-null state must not be null.",
+                NullPointerException.class,
+                () -> machine.setNewState(null, 1));
+        assertThrows("Name of non-null state must not be null.",
+                NullPointerException.class,
+                () -> machine.setNewFinalState(null, 2));
     }
 }

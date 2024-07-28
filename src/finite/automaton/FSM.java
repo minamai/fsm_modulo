@@ -40,7 +40,31 @@ public class FSM<E> {
         return alphabet;
     }
 
-    private void incorporateNewState(State<E> state){
+    private State<E> createInternalState(String name, boolean finality, E value)
+    throws NullPointerException{
+        State<E> state = new State<>(name, finality, value);
+
+        // idea: if incorporating a state thinks we're mutating null state
+        // then the string is null, so throw that exception instead
+        try {
+            incorporateNewState(state);
+        }
+        catch(NullStateMutationException e){
+            throw new NullPointerException("Name of non-null state must not be null.");
+        }
+
+        return state;
+    }
+
+    private void incorporateNewState(State<E> state)
+    throws NullPointerException, NullStateMutationException{
+        if(state == null){
+            throw new NullPointerException("State cannot be null pointer");
+        }
+        if(state.getName() == null){
+            throw new NullStateMutationException("Cannot incorporate new null state");
+        }
+
         // TODO: prevent null pointer as state
         // remove all traces of old state with same name
         State<E> sameNameState = getStateByName(state.getName());
@@ -139,22 +163,17 @@ public class FSM<E> {
         initState = state;
     }
 
-    public State<E> setNewState(String name){
-        State<E> state = new State<>(name);
-        incorporateNewState(state);
-        return state;
+    public State<E> setNewState(String name) throws NullPointerException{
+        // just give every parameter to get it over with
+        return createInternalState(name, false, null);
     }
 
-    public State<E> setNewState(String name, E value){
-        State<E> state = new State<>(name, false, value);
-        incorporateNewState(state);
-        return state;
+    public State<E> setNewState(String name, E value)throws NullPointerException{
+        return createInternalState(name, false, value);
     }
 
-    public State<E> setNewFinalState(String name, E value){
-        State<E> state = new State<>(name, true, value);
-        incorporateNewState(state);
-        return state;
+    public State<E> setNewFinalState(String name, E value)throws NullPointerException{
+        return createInternalState(name, true, value);
     }
 
     public void setTransition(State<E> current, char c, State<E> next)
