@@ -56,30 +56,6 @@ public class FSM<E> {
         return state;
     }
 
-    private void incorporateNewState(State<E> state)
-    throws NullPointerException, NullStateMutationException{
-        if(state == null){
-            throw new NullPointerException("State cannot be null pointer");
-        }
-        if(state.getName() == null){
-            throw new NullStateMutationException("Cannot incorporate new null state");
-        }
-
-        // TODO: prevent null pointer as state
-        // remove all traces of old state with same name
-        State<E> sameNameState = getStateByName(state.getName());
-        if(sameNameState != null){
-            // remove old state from transition table
-            transitionTable.remove(sameNameState);
-        }
-
-        // add to states list. automatically replaces old state
-        states.put(state.getName(), state);
-
-        // add to transition table
-        transitionTable.put(state, new HashMap<>());
-    }
-
 
     ////////////////////////
     // constructors
@@ -154,26 +130,13 @@ public class FSM<E> {
 
 
     //////////////
-    // setters & field constructors
+    // setters
 
     public void setInitState(State<E> state) throws InvalidStateException{
         if(!containsState(state)) {
             throw new InvalidStateException("Attempting to set state not in FSM to initial state.");
         }
         initState = state;
-    }
-
-    public State<E> setNewState(String name) throws NullPointerException{
-        // just give every parameter to get it over with
-        return createInternalState(name, false, null);
-    }
-
-    public State<E> setNewState(String name, E value)throws NullPointerException{
-        return createInternalState(name, false, value);
-    }
-
-    public State<E> setNewFinalState(String name, E value)throws NullPointerException{
-        return createInternalState(name, true, value);
     }
 
     public void setTransition(State<E> current, char c, State<E> next)
@@ -194,4 +157,52 @@ public class FSM<E> {
         }
         transitionTable.get(current).put(c, next);
     }
+
+
+    //////////////
+    // public state incorporation
+
+    public void incorporateNewState(State<E> state)
+    throws NullPointerException, NullStateMutationException{
+        // no need to return the state as it's already in the user's hands
+
+        if(state == null){
+            throw new NullPointerException("State cannot be null pointer");
+        }
+        if(state.getName() == null){
+            throw new NullStateMutationException("Cannot incorporate new null state");
+        }
+
+        // remove all traces of old state with same name
+        State<E> sameNameState = getStateByName(state.getName());
+        if(sameNameState != null){
+            // remove old state from transition table
+            transitionTable.remove(sameNameState);
+        }
+
+        // add to states list. automatically replaces old state
+        states.put(state.getName(), state);
+
+        // add to transition table
+        transitionTable.put(state, new HashMap<>());
+    }
+
+    public State<E> setNewState(String name) throws NullPointerException{
+        // just give every parameter to get it over with
+        return createInternalState(name, false, null);
+    }
+
+    public State<E> setNewState(String name, E value)throws NullPointerException{
+        return createInternalState(name, false, value);
+    }
+
+    public State<E> setNewFinalState(String name, E value)throws NullPointerException{
+        return createInternalState(name, true, value);
+    }
+
+
+    ////////////////////////
+    // functionality
+
+
 }

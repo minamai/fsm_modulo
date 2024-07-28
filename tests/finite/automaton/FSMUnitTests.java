@@ -140,6 +140,35 @@ public class FSMUnitTests extends TestCase {
         assertEquals(nonnullStates.size() + 1, machine.getStates().size());
     }
 
+    public void testStateIncorporation(){
+        FSM<Integer> machine = new FSM<>(ALPHABET);
+        State<Integer> first = new State<>(NAMES[0], false, VALUES[0]);
+        State<Integer> second = new State<>(NAMES[1], false, VALUES[1]);
+
+        // incorporate states
+        try {
+            machine.incorporateNewState(first);
+            machine.incorporateNewState(second);
+        }
+        catch(Exception e){
+            fail("Could not incorporate both states: " + e.getMessage());
+        }
+
+        // test both in machine by fetching by name
+        assertSame(first, machine.getStateByName(first.getName()));
+        assertSame(second, machine.getStateByName(second.getName()));
+        assertEquals(3, machine.getStates().size()); // check size for good luck
+
+        //if both in machine, we should be able to make valid connections
+        try{
+            machine.setTransition(first, ALPHABET[0], second);
+            assertSame(second, machine.getTransition(first, ALPHABET[0]));
+        }
+        catch(Exception e){
+            fail("Could not use transition on externally incorporated states: " + e.getMessage());
+        }
+    }
+
 
     //////////////
     // other state tests

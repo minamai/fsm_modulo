@@ -14,7 +14,7 @@ public class NullStateMutationTests extends TestCase {
 
 
     //////////////
-    // null state tests
+    // null state transitions tests
 
     @Test
     public void testSetTransitionFromNull(){
@@ -58,6 +58,20 @@ public class NullStateMutationTests extends TestCase {
     // null string tests
 
     @Test
+    public void testNullStringStateIncorporation(){
+        FSM<Integer> machine = new FSM<>(ALPHABET);
+        State<Integer> fakeNullState = new State<>(null);
+        // currently, a fake null state can be created freely
+        // and will not be equal to any FSM's null state
+        assertNotSame(machine.getNullState(), fakeNullState);
+
+        // attempting to incorporate it, though, will fail
+        assertThrows("Name of non-null state must not be null.",
+                NullStateMutationException.class,
+                () -> machine.incorporateNewState(fakeNullState));
+    }
+
+    @Test
     public void testNullStringNewState(){
         FSM<Integer> machine = new FSM<>(ALPHABET);
         assertThrows("Name of non-null state must not be null.",
@@ -69,5 +83,19 @@ public class NullStateMutationTests extends TestCase {
         assertThrows("Name of non-null state must not be null.",
                 NullPointerException.class,
                 () -> machine.setNewFinalState(null, 2));
+    }
+
+
+    //////////////
+    // null pointer state tests
+
+    @Test
+    public void testNullPointerStateIncorporation(){
+        FSM<Integer> machine = new FSM<>(ALPHABET);
+
+        // states in FSM's must not be null
+        assertThrows("State cannot be null pointer",
+                NullPointerException.class,
+                () -> machine.incorporateNewState(null));
     }
 }
