@@ -148,7 +148,7 @@ public class FSM<E> {
             throw new InvalidStateException("Attempting to set transition to state not in FSM.");
         }
         if(Arrays.binarySearch(alphabet, c) < 0){
-            throw new InvalidCharacterException("Attempting to transition using character not in alphabet.");
+            throw new InvalidCharacterException("Attempting to set transition using character not in alphabet.");
         }
         // if from null state, do not change
         if(current.equals(nullState)){
