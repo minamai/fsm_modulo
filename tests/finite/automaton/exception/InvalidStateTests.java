@@ -4,7 +4,6 @@ import finite.automaton.FSM;
 import finite.automaton.exceptions.InvalidStateException;
 import finite.automaton.state.State;
 import junit.framework.TestCase;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertThrows;
@@ -28,7 +27,7 @@ public class InvalidStateTests extends TestCase {
     public static void setupDummyFSM(){
         machine = new FSM<>(ALPHABET);
         nullState = machine.getNullState();
-        inState = machine.addNewState(NAMES[0]);
+        inState = machine.setNewState(NAMES[0]);
         outState = new State<>(NAMES[1]);
     }
 

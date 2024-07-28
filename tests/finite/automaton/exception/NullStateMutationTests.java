@@ -16,7 +16,7 @@ public class NullStateMutationTests extends TestCase {
     public void testSetTransitionFromNull(){
         FSM<Integer> machine = new FSM<>(ALPHABET);
         State<Integer> nullState = machine.getNullState();
-        State<Integer> state = machine.addNewState(NAME);
+        State<Integer> state = machine.setNewState(NAME);
 
         assertThrows("Attempting to set transition from null state",
                 NullStateMutationException.class,

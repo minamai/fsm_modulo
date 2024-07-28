@@ -2,12 +2,9 @@ package finite.automaton.exception;
 
 import finite.automaton.FSM;
 import finite.automaton.exceptions.InvalidCharacterException;
-import finite.automaton.exceptions.InvalidStateException;
 import finite.automaton.state.State;
 import junit.framework.TestCase;
 import org.junit.Test;
-
-import java.util.Arrays;
 
 import static org.junit.Assert.assertThrows;
 
@@ -19,8 +16,8 @@ public class InvalidCharacterTests extends TestCase {
     @Test
     public void testInvalidStateStartingTransition(){
         FSM<Integer> machine = new FSM<>(ALPHABET);
-        State<Integer> state1 = machine.addNewState(NAMES[0]);
-        State<Integer> state2 = machine.addNewState(NAMES[1]);
+        State<Integer> state1 = machine.setNewState(NAMES[0]);
+        State<Integer> state2 = machine.setNewState(NAMES[1]);
         char out = '0'; // character not in alphabet
 
         // failure to get before setting:

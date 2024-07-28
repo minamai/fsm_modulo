@@ -41,8 +41,15 @@ public class FSM<E> {
     }
 
     private void incorporateNewState(State<E> state){
-        // add to states list
-        // TODO: where to handle overwriting of states
+        // TODO: prevent null pointer as state
+        // remove all traces of old state with same name
+        State<E> sameNameState = getStateByName(state.getName());
+        if(sameNameState != null){
+            // remove old state from transition table
+            transitionTable.remove(sameNameState);
+        }
+
+        // add to states list. automatically replaces old state
         states.put(state.getName(), state);
 
         // add to transition table
@@ -87,7 +94,6 @@ public class FSM<E> {
     }
 
     public State<E> getStateByName(String name){
-        // can this be improved?
         return states.get(name);
     }
 
@@ -120,19 +126,19 @@ public class FSM<E> {
         initState = state;
     }
 
-    public State<E> addNewState(String name){
+    public State<E> setNewState(String name){
         State<E> state = new State<>(name);
         incorporateNewState(state);
         return state;
     }
 
-    public State<E> addNewState(String name, E value){
+    public State<E> setNewState(String name, E value){
         State<E> state = new State<>(name, false, value);
         incorporateNewState(state);
         return state;
     }
 
-    public State<E> addNewFinalState(String name, E value){
+    public State<E> setNewFinalState(String name, E value){
         State<E> state = new State<>(name, true, value);
         incorporateNewState(state);
         return state;

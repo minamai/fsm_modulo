@@ -68,7 +68,7 @@ public class FSMUnitTests extends TestCase {
     public void testBlankStateCreation() {
         FSM<Integer> machine = new FSM<>(ALPHABET);
 
-        State<Integer> state = machine.addNewState(NAMES[0]);
+        State<Integer> state = machine.setNewState(NAMES[0]);
         checkValuelessStateNotFinal(state, NAMES[0]);
 
         assertNotSame(state, machine.getNullState());
@@ -79,7 +79,7 @@ public class FSMUnitTests extends TestCase {
     public void testValuedStateCreation() {
         FSM<Integer> machine = new FSM<>(ALPHABET);
 
-        State<Integer> state = machine.addNewState(NAMES[0], VALUES[0]);
+        State<Integer> state = machine.setNewState(NAMES[0], VALUES[0]);
         checkWholeStateNotFinal(state, NAMES[0], VALUES[0]);
 
         assertNotSame(state, machine.getNullState());
@@ -90,7 +90,7 @@ public class FSMUnitTests extends TestCase {
     public void testFinalStateCreation() {
         FSM<Integer> machine = new FSM<>(ALPHABET);
 
-        State<Integer> state = machine.addNewFinalState(NAMES[0], VALUES[0]);
+        State<Integer> state = machine.setNewFinalState(NAMES[0], VALUES[0]);
         checkWholeStateFinal(state, NAMES[0], VALUES[0]);
 
         assertNotSame(state, machine.getNullState());
@@ -101,10 +101,10 @@ public class FSMUnitTests extends TestCase {
         FSM<Integer> machine = new FSM<>(ALPHABET);
 
         ArrayList<State<Integer>> nonnullStates = new ArrayList<>();
-        nonnullStates.add(machine.addNewState(NAMES[0]));
-        nonnullStates.add(machine.addNewState(NAMES[1], VALUES[1]));
-        nonnullStates.add(machine.addNewFinalState(NAMES[2], VALUES[2]));
-        nonnullStates.add(machine.addNewFinalState(NAMES[3], VALUES[3]));
+        nonnullStates.add(machine.setNewState(NAMES[0]));
+        nonnullStates.add(machine.setNewState(NAMES[1], VALUES[1]));
+        nonnullStates.add(machine.setNewFinalState(NAMES[2], VALUES[2]));
+        nonnullStates.add(machine.setNewFinalState(NAMES[3], VALUES[3]));
 
         for(int i = 0; i < nonnullStates.size(); i++) {
             State<Integer> state = nonnullStates.get(i);
@@ -138,13 +138,47 @@ public class FSMUnitTests extends TestCase {
             assertSame(machine.getNullState(), machine.getInitState());
 
             // make new state init
-            State<Integer> state = machine.addNewFinalState(NAMES[0], VALUES[0]);
+            State<Integer> state = machine.setNewFinalState(NAMES[0], VALUES[0]);
             machine.setInitState(state);
             assertNotSame(machine.getInitState(), machine.getNullState());
             assertSame(state, machine.getInitState());
         }
         catch(Exception e){
             fail("Could not test init state: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testReplaceStateSameName(){
+        FSM<Integer> machine = new FSM<>(ALPHABET);
+        char c = ALPHABET[0];
+
+        State<Integer> firstStateOld = machine.setNewState(NAMES[0]);
+        State<Integer> secondState = machine.setNewState(NAMES[1]);
+        try {
+            // part 1: name1 + c -> name2
+            machine.setTransition(firstStateOld, c, secondState);
+
+            // verify current state of firstState & firstState + c
+            assertSame(firstStateOld, machine.getStateByName(NAMES[0]));
+            assertSame(secondState, machine.getTransition(firstStateOld, c));
+        }
+        catch(Exception e){
+            fail("Could not setup/verify initial transition: " + e.getMessage());
+        }
+
+        // part 2: switch name1, ensure things work (see later comments)
+        State<Integer> firstStateNew = machine.setNewState(NAMES[0]);
+        // ensure no transitions can take place from old state
+        // this ensures
+        assertThrows("Attempting to set transition from state not in FSM.",
+                InvalidStateException.class,
+                () -> machine.setTransition(firstStateOld, c, secondState));
+        try {
+            assertSame(machine.getNullState(), machine.getTransition(firstStateNew, c));
+        }
+        catch(Exception e){
+            fail("could not verify new first state has null transition: " + e.getMessage());
         }
     }
 
@@ -157,7 +191,7 @@ public class FSMUnitTests extends TestCase {
         FSM<Integer> machine = new FSM<>(ALPHABET);
         State<Integer> nullState = machine.getNullState();
 
-        State<Integer> first = machine.addNewFinalState(NAMES[0], VALUES[0]);
+        State<Integer> first = machine.setNewFinalState(NAMES[0], VALUES[0]);
         try {
             // test that all transitions begin as to null state
             for (char c : ALPHABET) {
@@ -182,7 +216,7 @@ public class FSMUnitTests extends TestCase {
 
         try {
             // add state and transition to it
-            State<Integer> second = machine.addNewFinalState(NAMES[1], VALUES[1]);
+            State<Integer> second = machine.setNewFinalState(NAMES[1], VALUES[1]);
             machine.setTransition(first, ALPHABET[1], second);
 
             assertSame(first, machine.getTransition(first, ALPHABET[0]));
@@ -199,9 +233,9 @@ public class FSMUnitTests extends TestCase {
         FSM<Integer> machine = new FSM<>(ALPHABET);
         State<Integer> nullState = machine.getNullState();
 
-        State<Integer> first = machine.addNewFinalState(NAMES[0], VALUES[0]);
-        State<Integer> second = machine.addNewFinalState(NAMES[1], VALUES[1]);
-        State<Integer> third = machine.addNewFinalState(NAMES[2], VALUES[2]);
+        State<Integer> first = machine.setNewFinalState(NAMES[0], VALUES[0]);
+        State<Integer> second = machine.setNewFinalState(NAMES[1], VALUES[1]);
+        State<Integer> third = machine.setNewFinalState(NAMES[2], VALUES[2]);
         char c = ALPHABET[0];
 
         try {
