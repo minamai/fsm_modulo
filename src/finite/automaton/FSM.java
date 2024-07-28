@@ -222,6 +222,9 @@ public class FSM<E> {
         if(!isReady()){
             throw new IncompleteMachineException("Make sure all required FSM fields are filled in.");
         }
+        if(!isStringOfAlphabet(data)){
+            throw new InvalidCharacterException("Character in data is not in alphabet.");
+        }
 
         // since transitions aren't too bad (O(1) amortized time and space)
         // it's fine if wew check characters in the alphabet as we move along
@@ -234,13 +237,8 @@ public class FSM<E> {
                 return current;
             }
 
-            // error if data char not in alphabet
-            char c = data.charAt(i);
-            if(!isInAlphabet(c)){
-                throw new InvalidCharacterException("Character in data is not in alphabet.");
-            }
-
             // transition
+            char c = data.charAt(i);
             try {
                 current = getTransition(current, c);
             }
