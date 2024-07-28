@@ -79,6 +79,20 @@ public class FSMUnitTests extends TestCase {
         }
     }
 
+    public void testStringOfAlphabet(){
+        FSM<Integer> machine = new FSM<>(ALPHABET);
+        String[] validStrings = {"", "0", "1", "2", "01", "02", "21", "11", "2100102", "1101212"};
+        String[] invalidStrings = {"5", "a", "72", "122216", "4$", "21.12"};
+
+        // assert alphabets are fine
+        for(String s : validStrings){
+            assertTrue(machine.isStringOfAlphabet(s));
+        }
+        for(String s : invalidStrings){
+            assertFalse(machine.isStringOfAlphabet(s));
+        }
+    }
+
 
     //////////////
     // state creation tests

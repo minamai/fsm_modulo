@@ -132,6 +132,15 @@ public class FSM<E> {
         return initState != null;
     }
 
+    public boolean isStringOfAlphabet(String string){
+        for(int i = 0; i < string.length(); i++){
+            if(!isInAlphabet(string.charAt(i))){
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     //////////////
     // setters
