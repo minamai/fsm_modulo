@@ -30,6 +30,7 @@ public class FSMUnitTests extends TestCase {
         Collection<State<Integer>> states = machine.getStates();
         assertEquals(states.size(), 1);
         assertNull(machine.getInitState());
+        assertFalse(machine.isReady());
 
         // random search should fail
         assertNull(machine.getStateByName("random"));
@@ -334,6 +335,46 @@ public class FSMUnitTests extends TestCase {
         }
         catch(Exception e){
             fail("Final transition failed: " + e.getMessage());
+        }
+    }
+
+
+    //////////////
+    // functionality tests
+
+    @Test
+    public void testMachineReadinessNullStateOnly(){
+        FSM<Integer> machine = new FSM<>(ALPHABET);
+        assertFalse(machine.isReady());
+
+        try {
+            // null state can be used to make simplest ready machine
+            // blank machine always ends at null state, which is valid behaviour
+            machine.setInitState(machine.getNullState());
+            assertTrue(machine.isReady());
+        }
+        catch(Exception e){
+            fail("could not use null state as init state: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testMachineReadinessOneState(){
+        FSM<Integer> machine = new FSM<>(ALPHABET);
+        assertFalse(machine.isReady()); // repeat for good luck
+
+        // simplest ready non-trivial machine: one state mapping to itself on one character c
+        // starts and remains on state 1 iff string is regex \c*\
+        try{
+            State<Integer> state = machine.setNewFinalState(NAMES[0], VALUES[0]);
+            machine.setInitState(state);
+            assertTrue(machine.isReady()); // machine should now be ready
+
+            machine.setTransition(state, ALPHABET[0], state);
+            assertTrue(machine.isReady());
+        }
+        catch(Exception e){
+            fail("could not use new state in valid machine: " + e.getMessage());
         }
     }
 }

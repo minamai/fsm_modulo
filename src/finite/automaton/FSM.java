@@ -128,6 +128,10 @@ public class FSM<E> {
         return states.containsValue(state);
     }
 
+    public boolean isReady(){
+        return initState != null;
+    }
+
 
     //////////////
     // setters
@@ -203,6 +207,7 @@ public class FSM<E> {
 
     ////////////////////////
     // functionality
+
 
 
 }
