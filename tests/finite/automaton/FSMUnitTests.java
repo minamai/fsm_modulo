@@ -354,7 +354,7 @@ public class FSMUnitTests extends TestCase {
 
 
     //////////////
-    // functionality tests
+    // readiness tests
 
     @Test
     public void testMachineReadinessNullStateOnly(){

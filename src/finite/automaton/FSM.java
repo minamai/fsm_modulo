@@ -217,6 +217,42 @@ public class FSM<E> {
     ////////////////////////
     // functionality
 
+    public State<E> runMachine(String data)
+    throws IncompleteMachineException, InvalidCharacterException{
+        if(!isReady()){
+            throw new IncompleteMachineException("Make sure all required FSM fields are filled in.");
+        }
 
+        // since transitions aren't too bad (O(1) amortized time and space)
+        // it's fine if wew check characters in the alphabet as we move along
+        State<E> current = initState;
+
+        // this could be checked by name == null, but oh well
+        for(int i = 0; i < data.length(); i++){
+            // if current is null state then return it quickly
+            if(current.equals(nullState)){
+                return current;
+            }
+
+            // error if data char not in alphabet
+            char c = data.charAt(i);
+            if(!isInAlphabet(c)){
+                throw new InvalidCharacterException("Character in data is not in alphabet.");
+            }
+
+            // transition
+            try {
+                current = getTransition(current, c);
+            }
+            catch(InvalidStateException e){
+                // if invalid state, return null, because why not
+                // should never happen, since that would mean that current state was not in FSM
+                // that means that we have a bug on our hands
+                return null;
+            }
+        }
+
+        return current;
+    }
 
 }
