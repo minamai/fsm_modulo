@@ -4,7 +4,7 @@ import finite.automaton.state.State;
 import junit.framework.TestCase;
 import org.junit.Test;
 
-public class BasicMachineTests extends TestCase {
+public class BasicMachineVerboseTests extends TestCase {
 
     char[] ALPHABET = {'1', '2', '3'};
     String[] VALID_STRINGS = {"", "1", "2", "3", "12", "13", "32", "22", "3211213", "2212323"};
@@ -13,7 +13,7 @@ public class BasicMachineTests extends TestCase {
     String[] NAMES = {"S0", "S1", "S2"};
 
     //////////////
-    // readiness tests
+    // run tests
 
     @Test
     public void testMachineRunNullStateOnly(){
