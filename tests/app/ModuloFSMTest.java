@@ -25,16 +25,10 @@ public class ModuloFSMTest extends TestCase {
 
     private static void testOneMachine(int base, int modulo){
 
-        // generate alphabet
-        char[] alphabet = new char[base];
-        for(int i = 0; i < base; i++){
-            alphabet[i] = (char)('0' + i);
-        }
-
         FSM<Integer> machine = ModuloFSMFactory.makeModuloFSM(base, modulo);
         // assert basic features of machine:
         // - machine is not null
-        // - one state per modulo value + null (unremovable)
+        // - one state per modulo value + null state (unremovable)
         // - alphabet is as long as base
         assertNotNull(machine);
         assertEquals(modulo + 1, machine.getStates().size());

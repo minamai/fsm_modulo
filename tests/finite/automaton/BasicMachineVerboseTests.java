@@ -8,7 +8,6 @@ public class BasicMachineVerboseTests extends TestCase {
 
     char[] ALPHABET = {'1', '2', '3'};
     String[] VALID_STRINGS = {"", "1", "2", "3", "12", "13", "32", "22", "3211213", "2212323"};
-    char EXTERNAL = '0';
 
     String[] NAMES = {"S0", "S1", "S2"};
 
@@ -31,7 +30,7 @@ public class BasicMachineVerboseTests extends TestCase {
 
         for(String s : VALID_STRINGS) {
             try {
-                State<Integer> endState = machine.runMachine(VALID_STRINGS[0]);
+                State<Integer> endState = machine.runMachine(s);
                 assertSame(machine.getNullState(), endState);
             }
             catch(Exception e){

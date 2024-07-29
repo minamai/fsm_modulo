@@ -15,7 +15,6 @@ public class MachineRunFailureTests extends TestCase {
     char[] ALPHABET = {'1', '2', '3'};
     String[] VALID_STRINGS = {"", "1", "2", "3", "12", "13", "32", "22", "3211213", "2212323"};
     String[] INVALID_STRINGS = {"5", "a", "73", "233326", "4$", "32.23", "23-11"};
-    char EXTERNAL = '0';
 
     String[] NAMES = {"S0", "S1", "S2"};
 
