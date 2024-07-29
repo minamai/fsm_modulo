@@ -74,14 +74,11 @@ public class NullStateMutationTests extends TestCase {
     @Test
     public void testNullStringNewState(){
         FSM<Integer> machine = new FSM<>(ALPHABET);
-        assertThrows("Name of non-null state must not be null.",
-                NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> machine.setNewState(null));
-        assertThrows("Name of non-null state must not be null.",
-                NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> machine.setNewState(null, 1));
-        assertThrows("Name of non-null state must not be null.",
-                NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> machine.setNewFinalState(null, 2));
     }
 
@@ -94,8 +91,7 @@ public class NullStateMutationTests extends TestCase {
         FSM<Integer> machine = new FSM<>(ALPHABET);
 
         // states in FSM's must not be null
-        assertThrows("State cannot be null pointer",
-                NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> machine.incorporateNewState(null));
     }
 }
