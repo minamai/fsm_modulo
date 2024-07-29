@@ -12,6 +12,7 @@ public class BasicMachineVerboseTests extends TestCase {
 
     String[] NAMES = {"S0", "S1", "S2"};
 
+
     //////////////
     // run tests
 

@@ -17,35 +17,11 @@ public class MainSolution {
         System.out.println("Testing all numbers from 0 to " + UPPER_BOUND);
         System.out.println("Setting up machine...");
 
-        // generate alphabet
-        char[] alphabet = new char[BASE];
-        for(int i = 0; i < BASE; i++){
-            alphabet[i] = (char)('0' + i);
-        }
-
-        FSM<Integer> mod3BinaryMachine = new FSM<>(alphabet);
-
-        // generate list of states
-        List<State<Integer>> stateList = new ArrayList<>();
-
-        for(int i = 0; i <MODULO; i++){
-            stateList.add(mod3BinaryMachine.setNewFinalState("S" + i, i));
-        }
-
-        try {
-            for (int mod = 0; mod < MODULO; mod++) {
-                for (int digit = 0; digit < BASE; digit++) {
-                    // idea: concatenating is adding digit to end
-                    // in numbers that is: (mod | digit) -> mod * BASE + digit
-                    mod3BinaryMachine.setTransition(stateList.get(mod), alphabet[digit],
-                            stateList.get((mod * BASE + digit) % MODULO) );
-                }
-            }
-
-            mod3BinaryMachine.setInitState(stateList.get(0));
+        FSM<Integer> mod3BinaryMachine = ModuloFSMFactory.makeModuloFSM(BASE, MODULO);
+        if(mod3BinaryMachine != null){
             System.out.println("Set up machine. Processing cases...");
         }
-        catch(Exception e){
+        else{
             System.out.println("Caught exception. Aborting...");
             return;
         }
